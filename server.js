@@ -1,3 +1,4 @@
+const Challenge = require('./challenge.js');
 const Discord = require('discord.js');
 const fs = require('fs');
 
@@ -185,7 +186,13 @@ class Command {
         reply = `Command raised error: \`${e.message}\``;
         logs.warn(e.stack);
       }
-      if (!!reply) msg.reply(reply);
+      if (!!reply) {
+        if (reply instanceof Discord.RichEmbed) {
+          msg.reply('', {embed: reply});
+        } else {
+          msg.reply(reply);
+        }
+      }
     }
   }
 }
@@ -243,6 +250,11 @@ const commands = {
       } else {
         return `**${msg.author.username}**#${msg.author.discriminator}`;
       }
+    }),
+  
+  'test': new Command(null, null, 'test', 
+    async (msg, args) => {
+      return new Challenge('test', 'lorem ipsum dolor set amet', 'Test.fail();').attempt('console.log(1 + 1);').getEmbed();
     }),
 
   'help': new Command(null, null, 'Lists available commands.',

@@ -1,4 +1,5 @@
-const runTests = require('test.js');
+const RichEmbed = require('discord.js').RichEmbed;
+const runTests = require('./test.js');
 
 class Challenge {
   constructor(name, desc, tests) {
@@ -7,7 +8,7 @@ class Challenge {
     this.tests = tests;
   }
   
-  get embed {
+  getEmbed() {
     return new RichEmbed()
       .setColor('#2196F3')
       .setTitle(this.name)
@@ -25,20 +26,20 @@ class ChallengeAttempt {
     this.result = result;
   }
   
-  get embed {
+  getEmbed() {
     if (this.result.result) {
       return new RichEmbed()
-        .setAuthor('Success!')
+        .setAuthor('Success!', 'https://github.com/phantamanta44/codearena/raw/master/resources/pass.png')
         .setColor('#4CAF50')
-        .setDescription(`Passed: ${this.result.passed} / Failed: ${this.result.failed}`)
+        .setDescription(`Passed: ${this.result.passed} / Failed: 0`)
         .setTimestamp();
     } else {
       const embed = new RichEmbed()
-        .setAuthor('Failed!')
+        .setAuthor('Failed!', 'https://github.com/phantamanta44/codearena/raw/master/resources/fail.png')
         .setColor('#F44336')
-        .setDescription(`Passed: ${this.result.passed} / Failed: 0`)
+        .setDescription(`Passed: ${this.result.passed} / Failed: ${this.result.failed}`)
         .setTimestamp();
-      for (const test of result.tests) {
+      for (const test of this.result.tests) {
         if (!test.passed) {
           embed.addField('Failed Test', test.msg, false);
         }
@@ -48,4 +49,4 @@ class ChallengeAttempt {
   }
 }
 
-export default Challenge;
+module.exports = Challenge;

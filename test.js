@@ -125,4 +125,4 @@ class Framework {
   }
 }
 
-export default runTests;
+module.exports = runTests;

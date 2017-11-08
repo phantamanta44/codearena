@@ -14,7 +14,7 @@ class Challenge {
       .setColor('#2196F3')
       .setTitle(this.name)
       .setDescription(this.desc)
-      .setTimestamp();
+      .setFooter(`Difficulty: ${this.diff}`);
   }
 
   attempt(code) {
@@ -47,8 +47,7 @@ class ChallengeAttempt {
       return new RichEmbed()
         .setAuthor('Success!', 'https://github.com/phantamanta44/codearena/raw/master/resources/pass.png')
         .setColor('#4CAF50')
-        .setDescription(`Passed: ${this.result.passed} | Failed: 0`)
-        .setTimestamp();
+        .setDescription(`Passed: ${this.result.passed} | Failed: 0`);
     } else {
       const embed = new RichEmbed()
         .setAuthor('Failed!', 'https://github.com/phantamanta44/codearena/raw/master/resources/fail.png')

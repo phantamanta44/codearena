@@ -1,29 +1,32 @@
-const seval = require('notevil');
+const {VM} = require('vm2');
 
 function runTests(code, fixtures) {
   const framework = new Framework();
   const stdout = [];
-  const context = {
-    solve: null,
-    console: {
-      log(s) {
-        stdout.push(s === undefined ? 'undefined'
-          : s === null ? 'null' : s.toString());
-      }
+  const vm = new VM({
+    timeout: 5000,
+    sandbox: {
+      console: {
+        log(s) {
+          stdout.push(s === undefined ? 'undefined'
+            : s === null ? 'null' : s.toString());
+        },
+      },
+      Test: framework,
     }
-  }
+  });
   try {
-    seval(code, context);
-    context.Test = framework;
-    seval(fixtures, context);
+    vm.run(code);
+    vm.run(fixtures);
   } catch (e) {
+    console.log(e.name);
     return {
       result: false,
-      passed: 'N/A',
-      failed: 'N/A',
+      passed: -1,
+      failed: -1,
       tests: [{
         passed: false,
-        msg: `Encountered unexpected ${e.name}`
+        msg: `${e.name}: ${e.message}`
       }],
     }
   }

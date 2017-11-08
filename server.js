@@ -251,11 +251,6 @@ const commands = {
         return `**${msg.author.username}**#${msg.author.discriminator}`;
       }
     }),
-  
-  'test': new Command(null, null, 'test', 
-    async (msg, args) => {
-      return new Challenge('test', 'lorem ipsum dolor set amet', 'Test.fail();').attempt('console.log(1 + 1);').getEmbed();
-    }),
 
   'help': new Command(null, null, 'Lists available commands.',
     async (msg, args) => {

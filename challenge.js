@@ -32,13 +32,11 @@ class ChallengeAttempt {
         .setAuthor('Success!', 'https://github.com/phantamanta44/codearena/raw/master/resources/pass.png')
         .setColor('#4CAF50')
         .setDescription(`Passed: ${this.result.passed} / Failed: 0`)
-        .setTimestamp();
     } else {
       const embed = new RichEmbed()
         .setAuthor('Failed!', 'https://github.com/phantamanta44/codearena/raw/master/resources/fail.png')
         .setColor('#F44336')
         .setDescription(`Passed: ${this.result.passed} / Failed: ${this.result.failed}`)
-        .setTimestamp();
       for (const test of this.result.tests) {
         if (!test.passed) {
           embed.addField('Failed Test', test.msg, false);

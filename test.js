@@ -12,9 +12,21 @@ function runTests(code, fixtures) {
       }
     }
   }
-  seval(code, context);
-  context.Test = framework;
-  seval(fixtures, context);
+  try {
+    seval(code, context);
+    context.Test = framework;
+    seval(fixtures, context);
+  } catch (e) {
+    return {
+      result: false,
+      passed: 'N/A',
+      failed: 'N/A',
+      tests: [{
+        passed: false,
+        msg: `Encountered unexpected ${e.name}`
+      }],
+    }
+  }
   return {
     result: framework.failed === 0,
     passed: framework.passed,

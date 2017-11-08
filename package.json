@@ -1,0 +1,23 @@
+{
+  "name": "codearena",
+  "version": "1.0.0",
+  "description": "fight me irl",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "nan": "^2.7.0",
+    "notevil": "^1.1.0",
+    "uws": "^8.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phantamanta44/codearena.git"
+  },
+  "engines": {
+    "node": "9.1.x"
+  },
+  "license": "MIT"
+}

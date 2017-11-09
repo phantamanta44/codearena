@@ -1,6 +1,6 @@
 const RichEmbed = require('discord.js').RichEmbed;
 const runTests = require('./test.js');
-const request = require('request-promise');
+const request = require('request-promise-native');
 
 const repoRoot = 'https://raw.githubusercontent.com/phantamanta44/codearena-challenges/master/';
 class Challenge {
@@ -29,8 +29,8 @@ class Challenge {
     const index = JSON.parse(await request(`${repoRoot}${diff}.json`));
     const keys = Object.keys(index);
     const meta = index[keys[Math.floor(Math.random() * keys.length)]];
-    const chal = JSON.parse(await request(`${reporoot}${meta.ns}/${meta.key}.json`));
-    const tests = await request(`${reporoot}${meta.ns}/${meta.key}.js`);
+    const chal = JSON.parse(await request(`${repoRoot}${meta.ns}/${meta.key}.json`));
+    const tests = await request(`${repoRoot}${meta.ns}/${meta.key}.js`);
     return new Challenge(chal.name, chal.desc, diff, tests);
   }
 }

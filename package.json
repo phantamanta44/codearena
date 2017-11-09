@@ -9,7 +9,9 @@
   "dependencies": {
     "discord.js": "^11.1.0",
     "nan": "^2.7.0",
-    "uws": "^8.14.0",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
+    "uws": "^8.14.1",
     "vm2": "^3.5.2"
   },
   "repository": {

@@ -84,18 +84,18 @@ function init(bot, hasPermissionLevel) {
 module.exports = {
   arenaInit: init,
   arenaCommands: {
-    'arena': new Command('int?', '[difficulty]', 'Starts an open arena in the current channel.',
+    'arena': new Command('int?', '[diff (0-4)]', 'Starts an open arena in the current channel.',
       async (msg, args) => {
         if (!msg.channel.guild) return 'Open arenas cannot be started in DMs!';
         if (byChannel.has(msg.channel.id)) return 'An arena is already in progress!';
-        const arena = new OpenArena(Challenge.get(args[0]), msg.channel);
+        const arena = new OpenArena(await Challenge.get(args[0]), msg.channel);
         msg.channel.send(':crossed_swords: **An open arena is starting!** Submit your solution in a code block.', {embed: arena.chal.getEmbed()});
       }),
-    'dojo': new Command('int?', '[difficulty]', 'Starts a solo arena to test yourself.',
+    'dojo': new Command('int?', '[diff (0-4)]', 'Starts a solo arena to test yourself.',
       async (msg, args) => {
         if (!!msg.channel.guild) return 'Dojos can only run in DMs!';
         if (byChannel.has(msg.channel.id)) return 'A dojo is already in progress! Use `./forfeit` to concede.';
-        const arena = await SoloArena.instantiate(Challenge.get(args[0]), msg.author);
+        const arena = await SoloArena.instantiate(await Challenge.get(args[0]), msg.author);
         msg.reply(':yin_yang: **Started a Dojo Challenge!** Submit your solution in a code block.', {embed: arena.chal.getEmbed()});
       }),
     'forfeit': new Command(null, null, 'Concedes the current challenge.',

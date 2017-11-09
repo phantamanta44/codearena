@@ -75,10 +75,10 @@ class Framework {
     this.expect(ne !== a, m || `Expected not ${e}`);
   }
   assertDeepEquals(e, a, m) {
-    this.expect(deepEquals(e, a), m || `Expected ${e} but got ${a}`);
+    this.expect(deepEquals(e, a), m || `Expected ${JSON.stringify(e)} but got ${JSON.stringify(a)}`);
   }
   assertNotDeepEquals(ne, a, m) {
-    this.expect(!deepEquals(ne, a), m || `Expected not ${e}`);
+    this.expect(!deepEquals(ne, a), m || `Expected not ${JSON.stringify(e)}`);
   }
   assertApproxEquals(e, a, m) {
     this.expect(Math.abs(e - a) <= FP_ERROR, m || `Expected ${e} but got ${a}`);

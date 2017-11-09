@@ -71,7 +71,7 @@ class SoloArena extends Arena {
 
 function init(bot, hasPermissionLevel) {
   bot.on('message', msg => {
-    const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/gs.exec(msg.content);
+    const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/g.exec(msg.content);
     if (!!m) {
       logs.info(`Code submission from ${msg.author.id}:\n${m[1]}`);
       const arena = byChannel.get(msg.channel.id);

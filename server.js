@@ -34,13 +34,28 @@ const commands = {
       }
     }),
 
-  'halt': new Command(null, null, 'Kills the bot.',
+  'halt': new Command('str', '<restart|update|kill>', 'Kills the bot.',
     async (msg, args) => {
       if (hasPermissionLevel(msg.author.id, 4)) {
-        function destroy() {
-          bot.destroy().then(() => process.exit(0));
+        let code, reply;
+        switch (args[0]) {
+          case 'restart':
+            code = 15;
+            reply = 'Restarting...! :repeat:';
+            break;
+          case 'update':
+            code = 16;
+            reply = 'Updating...! :up:';
+            break;
+          case 'kill':
+            code = 0;
+            reply = 'Halting...! :octagonal_sign:';
+            break;
+          default:
+            return 'Invalid halting mode!'
         }
-        msg.reply('Halting!').then(destroy, destroy);
+        const destroy = () => bot.destroy().then(() => process.exit(code));
+        msg.reply(reply).then(destroy, destroy);
       } else {
         return 'No permission!';
       }

@@ -4,17 +4,19 @@ const request = require('request-promise-native');
 
 const repoRoot = 'https://raw.githubusercontent.com/phantamanta44/codearena-challenges/master/';
 class Challenge {
-  constructor(name, desc, diff, tests) {
+  constructor(name, desc, diff, author, tests) {
     this.name = name;
     this.desc = desc;
     this.diff = diff;
+    this.author = author;
     this.tests = tests;
   }
   
   getEmbed() {
     return new RichEmbed()
       .setColor('#2196F3')
-      .setTitle(this.name)
+      .setAuthor(this.name)
+      .setTitle(`By ${this.author}`)
       .setDescription(this.desc)
       .setFooter(`Difficulty: ${this.diff}`);
   }
@@ -32,7 +34,7 @@ class Challenge {
     const meta = index[keys[Math.floor(Math.random() * keys.length)]];
     const chal = JSON.parse(await request(`${repoRoot}${meta.ns}/${meta.key}.json`));
     const tests = await request(`${repoRoot}${meta.ns}/${meta.key}.js`);
-    return new Challenge(chal.name, chal.desc, diff, tests);
+    return new Challenge(chal.name, chal.desc, diff, meta.ns, tests);
   }
 }
 

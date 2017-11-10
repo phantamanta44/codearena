@@ -28,7 +28,7 @@ class Challenge {
   
   static async get(diff) {
     if (!diff) diff = Math.floor(Math.random() * 5);
-    if (diff < 0 || diff > 4) throw new Error('Difficulty out of bounds!');
+    if (diff < 0 || diff > 4) throw new Error('Difficulty must be in range 0-4!');
     const index = JSON.parse(await request(`${repoRoot}${diff}.json`));
     const keys = Object.keys(index);
     const meta = index[keys[Math.floor(Math.random() * keys.length)]];

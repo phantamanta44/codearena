@@ -34,22 +34,22 @@ const commands = {
       }
     }),
 
-  'halt': new Command('str', '<restart|update|kill>', 'Kills the bot.',
+  'halt': new Command('str', '<mode>', 'Kills the bot.',
     async (msg, args) => {
       if (hasPermissionLevel(msg.author.id, 4)) {
         let code, reply;
         switch (args[0]) {
           case 'restart':
             code = 15;
-            reply = 'Restarting...! :repeat:';
+            reply = ':repeat: Restarting...!';
             break;
           case 'update':
             code = 16;
-            reply = 'Updating...! :up:';
+            reply = ':up: Updating...!';
             break;
           case 'kill':
             code = 0;
-            reply = 'Halting...! :octagonal_sign:';
+            reply = ':octagonal_sign: Halting...!';
             break;
           default:
             return 'Invalid halting mode!'
@@ -82,16 +82,19 @@ const commands = {
 
   'help': new Command(null, null, 'Lists available commands.',
     async (msg, args) => {
-      let list = [];
+      let list = [], maxlen = 0;
       for (let name in commands) {
         if (commands.hasOwnProperty(name)) {
           let usage = name;
           if (!!commands[name].usage)
             usage += ' ' + commands[name].usage;
-          list.push(`./${usage} | ${commands[name].desc}`);
+          maxlen = Math.max(maxlen, usage.length);
+          list.push([`./${usage}`, usage.length, `| ${commands[name].desc}`]);
         }
       }
-      list.sort();
+      list.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
+      maxlen++;
+      list = list.map(s => s[0] + ' '.repeat(maxlen - s[1]) + s[2]);
       msg.author.createDM().then(dm => dm.send(`**__Available Commands__**\n\`\`\`1c\n${list.join('\n')}\n\`\`\``));
       return !!msg.guild ? 'Sent documentation in DMs.' : null;
     }),

@@ -73,7 +73,6 @@ function init(bot, hasPermissionLevel) {
   bot.on('message', msg => {
     const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/g.exec(msg.content);
     if (!!m) {
-      logs.info(`Code submission from ${msg.author.id}:\n${m[1]}`);
       const arena = byChannel.get(msg.channel.id);
       if (arena) arena.accept(m[1], msg, msg.author);
     }

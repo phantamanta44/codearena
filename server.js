@@ -118,10 +118,16 @@ bot.on('message', msg => {
     }
   }
 });
+bot.on('reconnecting', () => {
+  logs.warn('Attempting reconnection...');
+});
 bot.on('disconnect', async () => {
   logs.error('Disconnected unrecoverably!');
   await bot.destroy();
   process.exit(1);
+});
+bot.on('error', e +> {
+  logs.error(e);
 });
 
 bot.login(process.env.CA_TOKEN).catch(logs.error);

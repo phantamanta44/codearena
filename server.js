@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const {logs} = require('./logs.js');
 const Command = require('./command.js');
 const {hasPermissionLevel} = require('./user.js')
+const request = require('request-promise-native');
 
 /*
  * Commands
@@ -104,10 +105,33 @@ const commands = {
  * Bot init
  */
 const bot = new Discord.Client();
+let dblReqProps;
+async function postGuildCount() {
+  if (!dblReqProps) {
+    dblReqProps = {
+      uri: `https://discordbots.org/api/${bot.user.id}/stats`,
+      headers: {
+        authorization: process.env.CA_DBL_TOKEN,
+      },
+    };
+  }
+  const count = bot.guilds.size;
+  logs.info(`Posting guild count ${count} to DBL`);
+  return await request.post({
+    ...dblReqProps,
+    json: true,
+    body: {
+      server_count: count,
+    },
+  });
+}
 bot.on('ready', () => {
   logs.info('Logged in');
+  postGuildCount();
   arenaInit(bot, hasPermissionLevel, Command);
 });
+bot.on('guildCreate', postGuildCount);
+bot.on('guildDelete', postGuildCount);
 bot.on('message', msg => {
   if (!msg.channel.permissionsFor
       || msg.channel.permissionsFor(bot.user).has('SEND_MESSAGES')) {

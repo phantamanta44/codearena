@@ -126,7 +126,7 @@ bot.on('disconnect', async () => {
   await bot.destroy();
   process.exit(1);
 });
-bot.on('error', e +> {
+bot.on('error', e => {
   logs.error(e);
 });
 

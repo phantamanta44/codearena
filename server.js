@@ -109,9 +109,9 @@ let dblReqProps;
 async function postGuildCount() {
   if (!dblReqProps) {
     dblReqProps = {
-      uri: `https://discordbots.org/api/${bot.user.id}/stats`,
+      uri: `https://discordbots.org/api/bots/${bot.user.id}/stats`,
       headers: {
-        authorization: process.env.CA_DBL_TOKEN,
+        Authorization: process.env.CA_DBL_TOKEN,
       },
     };
   }

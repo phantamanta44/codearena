@@ -69,9 +69,10 @@ class SoloArena extends Arena {
   }
 }
 
+const messagePattern = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/;
 function init(bot) {
   bot.on('messageCreate', msg => {
-    const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/g.exec(msg.content);
+    const m = messagePattern.exec(msg.content);
     if (!!m) {
       const arena = byChannel.get(msg.channel.id);
       if (arena) arena.accept(m[1], msg, msg.member ? new Proxy(msg.author, {

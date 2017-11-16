@@ -1,9 +1,24 @@
 const {arenaCommands, arenaInit} = require('./arena.js');
-const Discord = require('discord.js');
+const Eris = require('eris');
 const {logs} = require('./logs.js');
 const Command = require('./command.js');
 const {hasPermissionLevel} = require('./user.js')
 const request = require('request-promise-native');
+
+Eris.Client.prototype.fetchUser = async function(id) {
+  const user = this.users.get(id);
+  return user || await this.getRESTUser(id);
+};
+Eris.Message.prototype.reply = function(body) {
+  if (typeof body === 'string') {
+    return this.channel.createMessage(`${this.author.mention}: ${body}`);
+  } else {
+    return this.channel.createMessage({
+      ...body,
+      content: body.content ? `${this.author.mention}: ${body.content}` : this.author.mention,
+    });
+  }
+};
 
 /*
  * Commands
@@ -14,7 +29,7 @@ const commands = {
   // Bot administration
 
   'invite': new Command(null, null, 'Generates a bot invite link.',
-    async (msg, args) => await bot.generateInvite()),
+    async (msg, args) => `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot`),
 
   'eval': new Command('str*', '<script>', 'Evaluates some JS.',
     async (msg, args) => {
@@ -41,21 +56,23 @@ const commands = {
         let code, reply;
         switch (args[0]) {
           case 'restart':
-            code = 15;
+            process.exitCode = 15;
             reply = ':repeat: Restarting...!';
             break;
           case 'update':
-            code = 16;
+            process.exitCode = 16;
             reply = ':up: Updating...!';
             break;
           case 'kill':
-            code = 0;
+            process.exitCode = 0;
             reply = ':octagonal_sign: Halting...!';
             break;
           default:
             return 'Invalid halting mode!'
         }
-        const destroy = () => bot.destroy().then(() => process.exit(code));
+        const destroy = () => bot.disconnect({
+          reconnect: false,
+        });
         msg.reply(reply).then(destroy, destroy);
       } else {
         return 'No permission!';
@@ -96,7 +113,7 @@ const commands = {
       list.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
       maxlen++;
       list = list.map(s => s[0] + ' '.repeat(maxlen - s[1]) + s[2]);
-      msg.author.createDM().then(dm => dm.send(`**__Available Commands__**\n\`\`\`1c\n${list.join('\n')}\n\`\`\``));
+      msg.author.getDMChannel().then(dm => dm.createMessage(`**__Available Commands__**\n\`\`\`1c\n${list.join('\n')}\n\`\`\``));
       return !!msg.guild ? 'Sent documentation in DMs.' : null;
     }),
 };
@@ -104,7 +121,7 @@ const commands = {
 /*
  * Bot init
  */
-const bot = new Discord.Client();
+const bot = new Eris(process.env.CA_TOKEN);
 let dblReqProps;
 async function postGuildCount() {
   if (!dblReqProps) {
@@ -125,16 +142,20 @@ async function postGuildCount() {
     },
   });
 }
+let initialized = false;
 bot.on('ready', () => {
   logs.info('Logged in');
+  initialized = true;
   postGuildCount();
   arenaInit(bot);
 });
-bot.on('guildCreate', postGuildCount);
+bot.on('guildCreate', () => {
+  if (initialized) postGuildCount();
+});
 bot.on('guildDelete', postGuildCount);
-bot.on('message', msg => {
-  if (!msg.channel.permissionsFor
-      || msg.channel.permissionsFor(bot.user).has('SEND_MESSAGES')) {
+bot.on('messageCreate', msg => {
+  if (!msg.channel.permissionsOf
+      || msg.channel.permissionsOf(bot.user.id).has('sendMessages')) {
     if (!!msg.content && msg.content.startsWith('./')) {
       let parts = msg.content.split(/\s+/g);
       let command = commands[parts[0].substring(2).toLowerCase()];
@@ -142,17 +163,12 @@ bot.on('message', msg => {
     }
   }
 });
-bot.on('reconnecting', () => {
-  logs.warn('Attempting reconnection...');
-});
-bot.on('disconnect', async () => {
-  logs.error('Disconnected unrecoverably!');
-  await bot.destroy();
-  process.exit(1);
+bot.on('warn', e => {
+  logs.warn(e);
 });
 bot.on('error', e => {
   logs.error(e);
 });
 
-bot.login(process.env.CA_TOKEN).catch(logs.error);
+bot.connect();
 module.exports = bot;

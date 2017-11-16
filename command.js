@@ -1,4 +1,3 @@
-const {RichEmbed} = require('discord.js');
 const {logs} = require('./logs.js');
 
 class ArgParser {
@@ -72,16 +71,6 @@ const tokenTypes = {
       }
     }
   },
-  channel: {
-    name: 'channel', func: async (ap, bot) => {
-      let matches = channelPattern.exec(ap.next());
-      if (!matches)
-        matches = [null, ap.args[ap.pos - 1]];
-      let channel = bot.channels[matches[1]];
-      if (!channel)
-        return ap.back();
-    }
-  }
 };
 class Command {
   constructor(argTypes, usage, desc, executor) {
@@ -146,10 +135,10 @@ class Command {
         logs.warn(e.stack);
       }
       if (!!reply) {
-        if (reply instanceof RichEmbed) {
-          msg.reply('', {embed: reply});
-        } else {
+        if (typeof reply === 'string') {
           msg.reply(reply);
+        } else {
+          msg.reply({embed: reply});
         }
       }
     }

@@ -26,14 +26,14 @@ class Arena {
 }
 
 class OpenArena extends Arena {
-  accept(code, msg, user) {
+  async accept(code, msg, user) {
     const result = this.chal.attempt(code);
     if (result.result.result) {
       this.unregister();
-      msg.reply('', {embed: result.getEmbed()});
-      msg.channel.send(`:shield: **${user.nickname || user.username} emerges victorious!**`);
+      await msg.reply({embed: result.getEmbed()});
+      msg.channel.createMessage(`:shield: **${user.nick || user.username} emerges victorious!**`);
     } else {
-      msg.reply('', {embed: result.getEmbed()});
+      msg.reply({embed: result.getEmbed()});
     }
   }
   
@@ -49,17 +49,17 @@ class SoloArena extends Arena {
   }
   
   static async instantiate(chal, user) {
-    return new SoloArena(chal, await user.createDM(), user);
+    return new SoloArena(chal, await user.getDMChannel(), user);
   }
   
   accept(code, msg, user) {
     const result = this.chal.attempt(code);
     if (result.result.result) {
       this.unregister();
-      msg.reply('', {embed: result.getEmbed()});
-      msg.channel.send(':accept: **Completed the Dojo Challenge!**');
+      msg.reply({embed: result.getEmbed()});
+      msg.channel.createMessage(':accept: **Completed the Dojo Challenge!**');
     } else {
-      msg.reply('', {embed: result.getEmbed()});
+      msg.reply({embed: result.getEmbed()});
     }
   }
   
@@ -70,11 +70,15 @@ class SoloArena extends Arena {
 }
 
 function init(bot) {
-  bot.on('message', msg => {
+  bot.on('messageCreate', msg => {
     const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/g.exec(msg.content);
     if (!!m) {
       const arena = byChannel.get(msg.channel.id);
-      if (arena) arena.accept(m[1], msg, msg.author);
+      if (arena) arena.accept(m[1], msg, msg.member ? new Proxy(msg.author, {
+        get(target, prop) {
+          return msg.member[prop] || msg.author[prop];
+        }
+      }) : msg.author);
     }
   });
 }
@@ -87,14 +91,20 @@ module.exports = {
         if (!msg.channel.guild) return 'Open arenas cannot be started in DMs!';
         if (byChannel.has(msg.channel.id)) return 'An arena is already in progress!';
         const arena = new OpenArena(await Challenge.get(args[0]), msg.channel);
-        msg.channel.send(':crossed_swords: **An open arena is starting!** Submit your solution in a code block.', {embed: arena.chal.getEmbed()});
+        msg.channel.createMessage({
+          content: ':crossed_swords: **An open arena is starting!** Submit your solution in a code block.',
+          embed: arena.chal.getEmbed(),
+        });
       }),
     'dojo': new Command('int?', '[diff]', 'Starts a solo arena to test yourself in.',
       async (msg, args) => {
         if (!!msg.channel.guild) return 'Dojos can only run in DMs!';
         if (byChannel.has(msg.channel.id)) return 'A dojo is already in progress! Use `./forfeit` to concede.';
         const arena = await SoloArena.instantiate(await Challenge.get(args[0]), msg.author);
-        msg.reply(':yin_yang: **Started a Dojo Challenge!** Submit your solution in a code block.', {embed: arena.chal.getEmbed()});
+        msg.reply({
+          content: ':yin_yang: **Started a Dojo Challenge!** Submit your solution in a code block.',
+          embed: arena.chal.getEmbed(),
+        });
       }),
     'forfeit': new Command(null, null, 'Concedes the current challenge.',
       async (msg, args) => {

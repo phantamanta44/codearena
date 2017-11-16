@@ -1,4 +1,3 @@
-const RichEmbed = require('discord.js').RichEmbed;
 const runTests = require('./test.js');
 const request = require('request-promise-native');
 
@@ -13,12 +12,17 @@ class Challenge {
   }
   
   getEmbed() {
-    return new RichEmbed()
-      .setColor('#2196F3')
-      .setAuthor(this.name)
-      .setTitle(`By ${this.author}`)
-      .setDescription(this.desc)
-      .setFooter(`Difficulty: ${this.diff}`);
+    return {
+      color: 2201331,
+      author: {
+        name: this.name,
+      },
+      title: `By ${this.author}`,
+      description: this.desc,
+      footer: {
+        text: `Difficulty: ${this.diff}`,
+      },
+    };
   }
 
   attempt(code) {
@@ -27,7 +31,7 @@ class Challenge {
   }
   
   static async get(diff) {
-    if (!diff) diff = Math.floor(Math.random() * 5);
+    if (diff === null) diff = Math.floor(Math.random() * 5);
     if (diff < 0 || diff > 4) throw new Error('Difficulty must be in range 0-4!');
     const index = JSON.parse(await request(`${repoRoot}${diff}.json`));
     const keys = Object.keys(index);
@@ -48,19 +52,32 @@ class ChallengeAttempt {
   
   getEmbed() {
     if (this.result.result) {
-      return new RichEmbed()
-        .setAuthor('Success!', 'https://github.com/phantamanta44/codearena/raw/master/resources/pass.png')
-        .setColor('#4CAF50')
-        .setDescription(`Passed: ${this.result.passed} | Failed: 0`);
+      return {
+        author: {
+          name: 'Success!',
+          icon_url: 'https://github.com/phantamanta44/codearena/raw/master/resources/pass.png',
+        },
+        color: 5025616,
+        description: `Passed: ${this.result.passed} | Failed: 0`,
+      };
     } else {
-      const embed = new RichEmbed()
-        .setAuthor('Failed!', 'https://github.com/phantamanta44/codearena/raw/master/resources/fail.png')
-        .setColor('#F44336')
-        .setDescription(`Passed: ${fmt(this.result.passed)} | Failed: ${fmt(this.result.failed)}`);
+      const embed = {
+        author: {
+          name: 'Failed!',
+          icon_url: 'https://github.com/phantamanta44/codearena/raw/master/resources/fail.png',
+        },
+        color: 16007990,
+        description: `Passed: ${fmt(this.result.passed)} | Failed: ${fmt(this.result.failed)}`,
+        fields: [],
+      };
       let i = ~this.result.failed ? Math.min(this.result.failed, 3) : 1, j = 0;
       while (i > 0) {
         if (!this.result.tests[j].passed) {
-          embed.addField('Failed Test', this.result.tests[j].msg, false);
+          embed.fields.push({
+            name: 'Failed Test',
+            value: this.result.tests[j].msg,
+            inline: false,
+          });
           i--;
         }
         j++;

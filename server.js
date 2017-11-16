@@ -128,7 +128,7 @@ async function postGuildCount() {
 bot.on('ready', () => {
   logs.info('Logged in');
   postGuildCount();
-  arenaInit(bot, hasPermissionLevel, Command);
+  arenaInit(bot);
 });
 bot.on('guildCreate', postGuildCount);
 bot.on('guildDelete', postGuildCount);
@@ -155,3 +155,4 @@ bot.on('error', e => {
 });
 
 bot.login(process.env.CA_TOKEN).catch(logs.error);
+module.exports = bot;

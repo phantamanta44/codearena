@@ -1,9 +1,9 @@
 const Challenge = require('./challenge.js');
 const Command = require('./command.js');
 const {logs} = require('./logs.js');
+const hasPermLevel = require('./user.js').hasPermissionLevel;
 
 const byChannel = new Map();
-let hasPermLevel = null;
 
 class Arena {
   constructor(chal, channel) {
@@ -69,7 +69,7 @@ class SoloArena extends Arena {
   }
 }
 
-function init(bot, hasPermissionLevel) {
+function init(bot) {
   bot.on('message', msg => {
     const m = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/g.exec(msg.content);
     if (!!m) {
@@ -77,7 +77,6 @@ function init(bot, hasPermissionLevel) {
       if (arena) arena.accept(m[1], msg, msg.author);
     }
   });
-  hasPermLevel = hasPermissionLevel;
 }
 
 module.exports = {

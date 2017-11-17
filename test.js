@@ -19,7 +19,6 @@ function runTests(code, fixtures) {
     vm.run(code);
     vm.run(fixtures);
   } catch (e) {
-    console.log(e.name);
     return {
       result: false,
       passed: -1,

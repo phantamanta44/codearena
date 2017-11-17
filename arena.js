@@ -69,17 +69,27 @@ class SoloArena extends Arena {
   }
 }
 
-const messagePattern = /^```(?:[^\n]*\n)?(\n*(?:[^\n]+\n*)+)```$/;
 function init(bot) {
   bot.on('messageCreate', msg => {
-    const m = messagePattern.exec(msg.content);
-    if (!!m) {
-      const arena = byChannel.get(msg.channel.id);
-      if (arena) arena.accept(m[1], msg, msg.member ? new Proxy(msg.author, {
-        get(target, prop) {
-          return msg.member[prop] || msg.author[prop];
-        }
-      }) : msg.author);
+    const arena = byChannel.get(msg.channel.id);
+    if (arena) {
+      let m = msg.content.trim();
+      if (!(m.startsWith('```') && m.endsWith('```'))) return;
+      m = m.substring(3, m.length - 3);
+      const firstLineBreak = m.indexOf('\n');
+      if (~firstLineBreak) {
+        const remLines = m.substring(firstLineBreak + 1);
+        if (remLines.trim()) m = remLines;
+      }
+      m = m.trim();
+      if (!!m) {
+        console.log(m);
+        arena.accept(m, msg, msg.member ? new Proxy(msg.author, {
+          get(target, prop) {
+            return msg.member[prop] || msg.author[prop];
+          }
+        }) : msg.author);
+      }
     }
   });
 }

@@ -144,10 +144,14 @@ async function postGuildCount() {
 }
 let initialized = false;
 bot.on('ready', () => {
-  logs.info('Logged in');
-  initialized = true;
-  postGuildCount();
-  arenaInit(bot);
+  if (!initialized) {
+    logs.info('Logged in');
+    initialized = true;
+    postGuildCount();
+    arenaInit(bot);
+  } else {
+    logs.warn('Reconnected');
+  }
 });
 bot.on('guildCreate', () => {
   if (initialized) postGuildCount();

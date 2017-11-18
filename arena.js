@@ -83,7 +83,6 @@ function init(bot) {
       }
       m = m.trim();
       if (!!m) {
-        console.log(m);
         arena.accept(m, msg, msg.member ? new Proxy(msg.author, {
           get(target, prop) {
             return msg.member[prop] || msg.author[prop];
@@ -130,7 +129,7 @@ module.exports = {
       async (msg, args) => {
         if (!msg.channel.guild) return 'You can end a dojo challenge with `/forfeit`.';
         if (hasPermLevel(msg.author.id, 3)
-            || msg.channel.permissionsFor(msg.author).has('MANAGE_MESSAGES')) {
+            || msg.channel.permissionsOf(msg.author).has('manageMessages')) {
           const arena = byChannel.get(msg.channel.id);
           if (arena) {
             arena.unregister();

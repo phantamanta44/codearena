@@ -117,8 +117,8 @@ const commands = {
 \`\`\`1c
 ${list.join('\n')}
 \`\`\`
-Want to contribute your own challenges? Head to https://github.com/phantamanta44/codearena-challenges and submit a pull request!`));
-      return !!msg.guild ? 'Sent documentation in DMs.' : null;
+Want to contribute your own challenges? Check out https://github.com/phantamanta44/codearena-challenges and submit a pull request!`));
+      return !!msg.channel.guild ? 'Sent documentation in DMs.' : null;
     }),
 };
 

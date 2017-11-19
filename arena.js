@@ -163,7 +163,7 @@ module.exports = {
             text: `${index.length - 5} more...`,
           };
           for (let i = 0; i < 5; i++) {
-            fields.push({
+            results.fields.push({
               name: `${index[i].ns}${index[i].key}`,
               value: (await Challenge.getDesc(index[i].ns, index[i].key)).desc,
               inline: false,
@@ -171,7 +171,7 @@ module.exports = {
           }
         } else {
           for (const e of index) {
-            fields.push({
+            results.fields.push({
               name: `${e.ns}/${e.key}`,
               value: (await Challenge.getDesc(e.ns, e.key)).desc,
               inline: false,

@@ -179,7 +179,7 @@ module.exports = {
           }
         }
         return reply;
-      });
+      }),
     'forfeit': new Command(null, null, 'Concedes the current challenge.',
       async (msg, args) => {
         const arena = byChannel.get(msg.channel.id);

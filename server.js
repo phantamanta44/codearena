@@ -113,7 +113,11 @@ const commands = {
       list.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
       maxlen++;
       list = list.map(s => s[0] + ' '.repeat(maxlen - s[1]) + s[2]);
-      msg.author.getDMChannel().then(dm => dm.createMessage(`**__Available Commands__**\n\`\`\`1c\n${list.join('\n')}\n\`\`\``));
+      msg.author.getDMChannel().then(dm => dm.createMessage(`**__Available Commands__**
+\`\`\`1c
+${list.join('\n')}
+\`\`\`
+Want to contribute your own challenges? Head to https://github.com/phantamanta44/codearena-challenges and submit a pull request!`));
       return !!msg.guild ? 'Sent documentation in DMs.' : null;
     }),
 };

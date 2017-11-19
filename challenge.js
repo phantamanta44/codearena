@@ -63,6 +63,7 @@ class Challenge {
       logs.warn(`Failed index retrieval ${diff}`);
       logs.warn(e);
       throw new Error('Could not retrieve index.');
+    }
   }
 }
 

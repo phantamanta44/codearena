@@ -106,6 +106,16 @@ module.exports = {
           embed: arena.chal.getEmbed(),
         });
       }),
+    'arenasel': new Command('str, str', '<namespace> <key>', 'Starts an open arena with a specific challenge',
+      async (msg, args) => {
+        if (!msg.channel.guild) return 'Open arenas cannot be started in DMs!';
+        if (byChannel.has(msg.channel.id)) return 'An arena is already in progress!';
+        const arena = new OpenArena(await Challenge.retrieve(args[0], args[1]), msg.channel);
+        msg.channel.createMessage({
+          content: ':crossed_swords: **An open arena is starting!** Submit your solution in a code block.',
+          embed: arena.chal.getEmbed(),
+        });
+      }),
     'dojo': new Command('int?', '[diff]', 'Starts a solo arena to test yourself in.',
       async (msg, args) => {
         if (!!msg.channel.guild) return 'Dojos can only run in DMs!';
@@ -116,6 +126,60 @@ module.exports = {
           embed: arena.chal.getEmbed(),
         });
       }),
+    'dojosel': new Command('str, str', '<namespace> <key>', 'Starts a solo arena with a specific challenge.',
+      async (msg, args) => {
+        if (!!msg.channel.guild) return 'Dojos can only run in DMs!';
+        if (byChannel.has(msg.channel.id)) return 'A dojo is already in progress! Use `./forfeit` to concede.';
+        const arena = await SoloArena.instantiate(await Challenge.retrieve(args[0], args[1]), msg.author);
+        msg.reply({
+          content: ':yin_yang: **Started a Dojo Challenge!** Submit your solution in a code block.',
+          embed: arena.chal.getEmbed(),
+        });
+      }),
+    'search': new Command('int, str', '<diff> <search>', 'Search for a challenge by namespace or key.',
+      async (msg, args) => {
+        let a = args[1].indexOf('/'), b = false;
+        if (~a) {
+          b = args[1].substring(a + 1);
+          a = args[1].substring(0, a);
+        }
+        let index = await Challenge.getIndex(args[0]);
+        index = index.filter(c => {
+          if (b === false) return c.key.includes(args[1]) || c.ns.includes(args[1]);
+          if (a && !c.ns.includes(a)) return false;
+          return !b || c.key.includes(b)
+        });
+        if (index.length ===0) return 'No results!';
+        const results = {
+          color: 2201331,
+          author: {
+            name: 'Search Results',
+          },
+          description: this.desc,
+          fields: [],
+        };
+        if (index.length > 5) {
+          results.footer = {
+            text: `${index.length - 5} more...`,
+          };
+          for (let i = 0; i < 5; i++) {
+            fields.push({
+              name: `${index[i].ns}${index[i].key}`,
+              value: (await Challenge.getDesc(index[i].ns, index[i].key)).desc,
+              inline: false,
+            });
+          }
+        } else {
+          for (const e of index) {
+            fields.push({
+              name: `${e.ns}/${e.key}`,
+              value: (await Challenge.getDesc(e.ns, e.key)).desc,
+              inline: false,
+            });
+          }
+        }
+        return reply;
+      });
     'forfeit': new Command(null, null, 'Concedes the current challenge.',
       async (msg, args) => {
         const arena = byChannel.get(msg.channel.id);

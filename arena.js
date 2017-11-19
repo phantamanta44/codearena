@@ -178,7 +178,7 @@ module.exports = {
             });
           }
         }
-        return reply;
+        return results;
       }),
     'forfeit': new Command(null, null, 'Concedes the current challenge.',
       async (msg, args) => {

@@ -4,10 +4,10 @@ const {logs} = require('./logs.js');
 
 const repoRoot = 'https://raw.githubusercontent.com/phantamanta44/codearena-challenges/master/';
 class Challenge {
-  constructor(name, desc, diff, author, tests) {
+  constructor(name, desc, key, author, tests) {
     this.name = name;
     this.desc = desc;
-    this.diff = diff;
+    this.key = key;
     this.author = author;
     this.tests = tests;
   }
@@ -16,12 +16,12 @@ class Challenge {
     return {
       color: 2201331,
       author: {
-        name: this.name,
+        name: this.key,
       },
-      title: `By ${this.author}`,
+      title: this.name,
       description: this.desc,
       footer: {
-        text: `Difficulty: ${this.diff}`,
+        text: `By ${this.author}`,
       },
     };
   }
@@ -39,7 +39,7 @@ class Challenge {
     try {
       const chal = await Challenge.getDesc(ns, key);
       const tests = await request(`${repoRoot}${ns}/${key}.js`);
-      return new Challenge(chal.name, chal.desc, diff, ns, tests);
+      return new Challenge(chal.name, chal.desc, key, ns, tests);
     } catch (e) {
       logs.warn(`Failed retrieval of ${ns}/${key}`);
       logs.warn(e);

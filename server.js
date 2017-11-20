@@ -10,12 +10,13 @@ Eris.Client.prototype.fetchUser = async function(id) {
   return user || await this.getRESTUser(id);
 };
 Eris.Message.prototype.reply = function(body) {
+  const replyPrefix = !this.channel.guild ? '' : `${this.author.mention}: `;
   if (typeof body === 'string') {
-    return this.channel.createMessage(`${this.author.mention}: ${body}`);
+    return this.channel.createMessage(`${replyPrefix}${body}`);
   } else {
     return this.channel.createMessage({
       ...body,
-      content: body.content ? `${this.author.mention}: ${body.content}` : this.author.mention,
+      content: body.content ? `${replyPrefix}${body.content}` : this.author.mention,
     });
   }
 };

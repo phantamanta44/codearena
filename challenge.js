@@ -17,6 +17,7 @@ class Challenge {
       color: 2201331,
       author: {
         name: this.key,
+        icon_url: 'https://github.com/phantamanta44/codearena/raw/master/resources/fight.png',
       },
       title: this.name,
       description: this.desc,

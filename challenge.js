@@ -39,12 +39,12 @@ class Challenge {
     try {
       const chal = await Challenge.getDesc(ns, key);
       const tests = await request(`${repoRoot}${ns}/${key}.js`);
+      return new Challenge(chal.name, chal.desc, diff, ns, tests);
     } catch (e) {
       logs.warn(`Failed retrieval of ${ns}/${key}`);
       logs.warn(e);
       throw new Error('Could not retrieve challenge.');
     }
-    return new Challenge(chal.name, chal.desc, diff, ns, tests);
   }
   
   static async get(diff) {

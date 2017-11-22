@@ -27,7 +27,7 @@ function runTests(code, fixtures) {
         passed: false,
         msg: `${e.name}: ${e.message}`
       }],
-    }
+    };
   }
   return {
     result: framework.failed === 0,

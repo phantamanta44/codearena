@@ -193,7 +193,7 @@ module.exports = {
       async (msg, args) => {
         if (!msg.channel.guild) return 'You can end a dojo challenge with `/forfeit`.';
         if (hasPermLevel(msg.author.id, 3)
-            || msg.channel.permissionsOf(msg.author).has('manageMessages')) {
+            || msg.channel.permissionsOf(msg.author.id).has('manageMessages')) {
           const arena = byChannel.get(msg.channel.id);
           if (arena) {
             arena.unregister();

@@ -125,13 +125,15 @@ Want to contribute your own challenges? Check out https://github.com/phantamanta
   'info': new Command(null, null, 'Shows some interesting info.',
     async (msg, args) => {
       return {
-        title: 'Welcome to CodeArena!',
+        author: {
+          name: 'Welcome to CodeArena!',
+          url: 'https://discordbots.org/bot/355188989420109837',
+          icon_url: bot.user.avatarURL,
+        },
         description: 'Abuse your keyboard! Fight your friends! Assert your dominance!',
-        url: 'https://discordbots.org/bot/355188989420109837',
         color: 2201331,
         footer: {
           text: 'Powered by Eris!',
-          url: 'https://abal.moe/Eris/',
         },
         fields: [{
           name: 'Author',

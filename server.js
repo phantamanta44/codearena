@@ -121,6 +121,41 @@ ${list.join('\n')}
 Want to contribute your own challenges? Check out https://github.com/phantamanta44/codearena-challenges and submit a pull request!`));
       return !!msg.channel.guild ? 'Sent documentation in DMs.' : null;
     }),
+  
+  'info': new Command(null, null, 'Shows some interesting info.',
+    async (msg, args) => {
+      return {
+        title: 'Welcome to CodeArena!',
+        description: 'Abuse your keyboard! Fight your friends! Assert your dominance!',
+        url: 'https://discordbots.org/bot/355188989420109837',
+        color: 2201331,
+        footer: {
+          text: 'Powered by Eris!',
+          url: 'https://abal.moe/Eris/',
+        },
+        fields: [{
+          name: 'Author',
+          value: 'Phanta#1328',
+          inline: true,
+        }, {
+          name: 'Prefix',
+          value: './',
+          inline: true,
+        }, {
+          name: 'Repo',
+          value: 'https://github.com/phantamanta44/CodeArena',
+          inline: true,
+        }, {
+          name: 'Uptime',
+          value: `${process.uptime()} seconds`,
+          inline: false,
+        }, {
+          name: 'Server Count',
+          value: `${bot.guilds.size} servers`,
+          inline: false,
+        }],
+      };
+    }),
 };
 
 /*
@@ -148,11 +183,14 @@ async function postGuildCount() {
   });
 }
 let initialized = false;
+const prefixes = ['./'];
 bot.on('ready', () => {
   if (!initialized) {
     logs.info('Logged in');
     initialized = true;
     postGuildCount();
+    prefixes.push(`<@${bot.user.id}>`);
+    prefixes.push(`<@!${bot.user.id}>`);
     arenaInit(bot);
   } else {
     logs.warn('Reconnected');
@@ -163,14 +201,21 @@ bot.on('guildCreate', () => {
 });
 bot.on('guildDelete', postGuildCount);
 bot.on('messageCreate', msg => {
-  if (!msg.channel.permissionsOf
-      || msg.channel.permissionsOf(bot.user.id).has('sendMessages')) {
-    if (!!msg.content && msg.content.startsWith('./')) {
-      let parts = msg.content.split(/\s+/g);
-      let command = commands[parts[0].substring(2).toLowerCase()];
-      if (!!command) command.execute(msg, parts.slice(1), bot);
+  if (msg.author.bot || !msg.content) return;
+  if (msg.channel.permissionsOf) {
+    if (!msg.channel.permissionsOf(bot.user.id).has('sendMessages')) return;
+  }
+  let content = null;
+  for (const pref of prefixes) {
+    if (msg.content.startsWith(pref)) {
+      content = msg.content.substring(pref.length).trimLeft();
+      break;
     }
   }
+  if (!content) return;
+  let parts = content.split(/\s+/g);
+  let command = commands[parts[0].toLowerCase()];
+  if (!!command) command.execute(msg, parts.slice(1), bot);
 });
 bot.on('warn', e => {
   logs.warn(e);

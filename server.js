@@ -164,8 +164,21 @@ Want to contribute your own challenges? Check out https://github.com/phantamanta
  * Bot init
  */
 const bot = new Eris(process.env.CA_TOKEN);
+let lastPost = -1, postQueued = false;
+function postGuildCount() {
+  const currentTime = Date.now();
+  const diff = lastPost + 30000 - currentTime;
+  if (diff <= 0) {
+    doPostGuildCount(currentTime);
+  } else if (!postQueued) {
+    postQueued = true;
+    setTimeout(doPostGuildCount, diff);
+  }
+}
 let dblReqProps;
-async function postGuildCount() {
+async function doPostGuildCount(postTime = Date.now()) {
+  lastPost = postTime;
+  postQueued = false;
   if (!dblReqProps) {
     dblReqProps = {
       uri: `https://discordbots.org/api/bots/${bot.user.id}/stats`,

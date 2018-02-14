@@ -27,8 +27,8 @@ class Challenge {
     };
   }
 
-  attempt(code) {
-    const result = runTests(code, this.tests);
+  async attempt(code) {
+    const result = await runTests(code, this.tests);
     return new ChallengeAttempt(result);
   }
   

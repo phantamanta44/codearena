@@ -27,7 +27,7 @@ class Arena {
 
 class OpenArena extends Arena {
   async accept(code, msg, user) {
-    const result = this.chal.attempt(code);
+    const result = await this.chal.attempt(code);
     if (result.result.result) {
       this.unregister();
       await msg.reply({embed: result.getEmbed()});
@@ -52,8 +52,8 @@ class SoloArena extends Arena {
     return new SoloArena(chal, await user.getDMChannel(), user);
   }
   
-  accept(code, msg, user) {
-    const result = this.chal.attempt(code);
+  async accept(code, msg, user) {
+    const result = await this.chal.attempt(code);
     if (result.result.result) {
       this.unregister();
       msg.reply({embed: result.getEmbed()});

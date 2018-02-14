@@ -177,6 +177,10 @@ function postGuildCount() {
 }
 let dblReqProps;
 async function doPostGuildCount(postTime = Date.now()) {
+  if (!process.env.CA_DBL_TOKEN) {
+    logs.info('No DBL token provided! Ignoring post...');
+    return;
+  }
   lastPost = postTime;
   postQueued = false;
   if (!dblReqProps) {

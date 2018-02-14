@@ -18,7 +18,7 @@
     "url": "https://github.com/phantamanta44/codearena.git"
   },
   "engines": {
-    "node": "9.1.x"
+    "node": "9.x.x"
   },
   "license": "MIT"
 }
